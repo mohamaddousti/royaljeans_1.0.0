@@ -15,10 +15,11 @@ import {
 import { HamburgerIcon } from '@chakra-ui/icons';
 import Sidebar from './Sidebar.jsx';
 import Footer from './Footer.jsx';
+import Navbar from './Navbar.jsx'; // Import Navbar
 
 const LayoutComponent = ({ children, user }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isMobile] = useMediaQuery('(max-width: 768px)'); // Adjust breakpoint as needed
+  const [isMobile] = useMediaQuery('(max-width: 768px'); // Adjust breakpoint as needed
 
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -30,7 +31,7 @@ const LayoutComponent = ({ children, user }) => {
   return (
     <Flex direction="column" minH="100vh" bg={bgColor} color={textColor}>
       {/* Navbar */}
-
+      <Navbar user={user} /> {/* Render Navbar */}  
       {/* Content */}
       <Flex flex="1" direction="row" pt={4} px={isMobile ? 2 : 4} alignItems="flex-start">
         {/* Sidebar (Hidden on smaller screens, use Drawer) */}
