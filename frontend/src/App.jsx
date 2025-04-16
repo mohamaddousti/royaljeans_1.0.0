@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 // Import Chakra UI components
-import { Box, Spinner, Text, Center, useColorModeValue, useStyleConfig } from '@chakra-ui/react';
+import { Box, Spinner, Text, Center, useColorModeValue} from '@chakra-ui/react';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import './App.css';
@@ -17,7 +17,6 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(!!token); // Keep loading state logic
-  const styles = useStyleConfig("Global", {});
 
   // Fetch user data logic remains the same
   useEffect(() => {
@@ -66,7 +65,7 @@ function App() {
       {/* CssBaseline is removed */}
       {loading ? (
         // Replace MUI Box and CircularProgress with Chakra Center and Spinner
-        <Center h="100vh" bg={bgColor}>
+        <Center h="100vh" bg={bgColor}  fontFamily= 'Vazirmatn, sans-serif'>
           <Spinner
             thickness="4px"
             speed="0.65s"
@@ -75,12 +74,12 @@ function App() {
             size="xl"
           />
           {/* Replace MUI Typography with Chakra Text */}
-          <Text fontSize="xl" ml={4} color={textColor}>در حال بارگذاری...</Text>
+          <Text fontSize="xl" ml={4} color={textColor}  fontFamily= 'Vazirmatn, sans-serif'>در حال بارگذاری...</Text>
         </Center>
       ) : !token ? (
         <Login setToken={setToken} />
       ) : !user ? ( // Optional: Add a specific loading state for user fetching if desired
-          <Center h="100vh" bg={bgColor}>
+          <Center h="100vh" bg={bgColor}  fontFamily= 'Vazirmatn, sans-serif'>
             <Spinner
               thickness="4px"
               speed="0.65s"
@@ -88,7 +87,7 @@ function App() {
               color="brand.500"
               size="xl"
             />
-            <Text fontSize="xl" ml={4} color={textColor}>در حال دریافت اطلاعات کاربر...</Text>
+            <Text fontSize="xl" ml={4} color={textColor}  fontFamily= 'Vazirmatn, sans-serif'>در حال دریافت اطلاعات کاربر...</Text>
           </Center>
       ) : (
         <LayoutComponent user={user}>
