@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 // Import Chakra UI components
-import { Box, Spinner, Text, Center, useColorModeValue } from '@chakra-ui/react';
+import { Box, Spinner, Text, Center, useColorModeValue, useStyleConfig } from '@chakra-ui/react';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import './App.css';
@@ -17,6 +17,7 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(!!token); // Keep loading state logic
+  const styles = useStyleConfig("Global", {});
 
   // Fetch user data logic remains the same
   useEffect(() => {
