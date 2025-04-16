@@ -10,6 +10,7 @@ import GeneratePage from './components/GeneratePage';
 import ProductsPage from './components/ProductsPage';
 import ProfilePage from './components/ProfilePage';
 import AdminPage from './components/AdminPage';
+import ChatBox from './components/ChatBox'; // Import ChatBox
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -99,6 +100,7 @@ function App() {
           </Routes>
         </LayoutComponent>
       )}
+      <ChatBox /> {/* Add ChatBox component */}
     </Router>
   );
 }
