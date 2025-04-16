@@ -27,9 +27,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 app = FastAPI()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# **اصلاح شد: اضافه کردن پورت 5173 به لیست origins مجاز**
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],  # اضافه کردن پورت 3001
+    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:5173"], 
     allow_credentials=True,
     allow_methods=["*"],  # همه متدها (GET, POST, ...)
     allow_headers=["*"],  # همه هدرها (مثل Authorization)
@@ -140,9 +142,11 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
 
 @app.post("/generate_product")
 async def generate_product(code: str = Form(...), additional_code: str = Form(...), db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    if len(code) != 29:
+    # **توجه:** کد محصول در اینجا ۲۹ رقم فرض شده. ممکن است نیاز به تطابق با فرمت دیگر باشد.
+    if len(code) != 29: 
         raise HTTPException(status_code=400, detail="کد باید 29 رقم باشد")
 
+    # ... (بقیه منطق تابع generate_product) ...
     # گرفتن هر بخش کد
     category_code = code[0:2]    # 2 رقم
     material_code = code[2:4]    # 2 رقم
@@ -202,22 +206,12 @@ async def generate_product(code: str = Form(...), additional_code: str = Form(..
 
     # ساخت نام محصول
     product_name = f"{category_row.category} {material_row.material} {model_row.model} {style1_row.style1} {style2_row.style2} {style3_row.style3} {style4_row.style4} {weight_row.weight} قد {length_row.length} {color_row.color} {fabric_row.fabric} {size_row.size}"
+    full_name = f"{product_name} {additional_code}" # نام کامل شامل کد اضافه
 
     # ذخیره در لاگ
     product_log = ProductLog(
         user_id=user.id,
-        product_name=product_name,
-        product_code=code,
-        additional_code=additional_code
-    )
-    db.add(product_log)
-    db.commit()
-
-    return {"product_name": f"{product_name} {additional_code}"}
-    # ذخیره در لاگ
-    product_log = ProductLog(
-        user_id=user.id,
-        product_name=full_name,
+        product_name=product_name, # ذخیره نام اصلی بدون کد اضافه
         product_code=code,
         additional_code=additional_code
     )
@@ -226,19 +220,21 @@ async def generate_product(code: str = Form(...), additional_code: str = Form(..
 
     return {"product_name": full_name}
 
+
 @app.get("/products", response_model=List[dict])
 async def get_products(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    products = db.query(ProductLog).filter(ProductLog.user_id == user.id).all()
+    products = db.query(ProductLog).filter(ProductLog.user_id == user.id).order_by(ProductLog.created_at.desc()).all() # مرتب سازی بر اساس تاریخ
     return [
         {
             "id": product.id,
             "product_name": product.product_name,
             "product_code": product.product_code,
             "additional_code": product.additional_code,
-            "created_at": product.created_at
+            "created_at": product.created_at.isoformat() # تبدیل به فرمت استاندارد ISO
         }
         for product in products
     ]
+
 @app.post("/add_product_code")
 async def add_product_code(
     category: str = Form(...),
@@ -335,19 +331,24 @@ async def export_db(user: User = Depends(get_current_user), db: Session = Depend
     } for c in codes]
 
     df = pd.DataFrame(data)
-    df.to_excel("product_codes.xlsx", index=False)
-    return FileResponse("product_codes.xlsx", filename="product_codes.xlsx")
+    # اطمینان از وجود پوشه برای ذخیره فایل اکسل
+    os.makedirs("exports", exist_ok=True)
+    file_path = "exports/product_codes.xlsx"
+    df.to_excel(file_path, index=False)
+    return FileResponse(file_path, filename="product_codes.xlsx")
 
 @app.get("/product_logs")
 async def get_product_logs(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     if "admin" not in get_user_permissions(user, db):
         raise HTTPException(status_code=403, detail="دسترسی ندارید")
 
-    logs = db.query(ProductLog).all()
+    logs = db.query(ProductLog).options(relationship(User)).order_by(ProductLog.created_at.desc()).all() # Fetch user info too and order
     return [{
-        "user": f"{log.user.first_name} {log.user.last_name}",
+        "user": f"{log.user.first_name} {log.user.last_name}" if log.user else "کاربر نامشخص", # Handle potential missing user
         "product_name": log.product_name,
-        "created_at": log.created_at
+        "product_code": log.product_code,
+        "additional_code": log.additional_code,
+        "created_at": log.created_at.isoformat()
     } for log in logs]
 
 @app.post("/create_user")
@@ -356,7 +357,7 @@ async def create_user(
     last_name: str = Form(...),
     username: str = Form(...),
     password: str = Form(...),
-    permissions: list = Form(...),
+    permissions: List[str] = Form(...), # دریافت لیست permission ها
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -378,6 +379,7 @@ async def create_user(
     db.commit()
     db.refresh(new_user)
 
+    # اضافه کردن permission ها به دیتابیس
     for perm in permissions:
         db.add(Permission(user_id=new_user.id, permission=perm))
     db.commit()
@@ -388,7 +390,7 @@ async def create_user(
 async def update_profile(
     first_name: str = Form(...),
     last_name: str = Form(...),
-    password: str = Form(None),
+    password: str = Form(None), # رمز عبور اختیاری
     avatar: UploadFile = File(None),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -398,13 +400,39 @@ async def update_profile(
     if password:
         user.password = get_password_hash(password)
     if avatar:
+        # اطمینان از وجود پوشه آپلود
         os.makedirs("static/avatars", exist_ok=True)
-        avatar_path = f"static/avatars/{user.id}_{avatar.filename}"
-        with open(avatar_path, "wb") as f:
-            f.write(await avatar.read())
-        user.avatar = avatar_path
-    db.commit()
-    return {"message": "پروفایل به‌روزرسانی شد"}
+        # استفاده از نام فایل امن تر
+        file_extension = os.path.splitext(avatar.filename)[1]
+        avatar_filename = f"{user.id}_{int(datetime.now().timestamp())}{file_extension}" 
+        avatar_path = os.path.join("static/avatars", avatar_filename)
+        
+        try:
+            with open(avatar_path, "wb") as f:
+                content = await avatar.read()
+                f.write(content)
+            user.avatar = avatar_path # ذخیره مسیر نسبی
+        except Exception as e:
+            # Handle potential file writing errors
+            print(f"Error saving avatar: {e}") 
+            # Optionally raise HTTPException or return error message
+
+    try:
+        db.commit()
+        db.refresh(user) # دریافت اطلاعات به روز شده کاربر
+        return {"message": "پروفایل به‌روزرسانی شد", "user": {
+            "id": user.id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "username": user.username,
+            "avatar": user.avatar,
+            # Note: Do not return password hash
+        }}
+    except Exception as e:
+        db.rollback() # بازگرداندن تغییرات در صورت خطا
+        print(f"Error updating profile in DB: {e}")
+        raise HTTPException(status_code=500, detail="خطا در به‌روزرسانی پروفایل در دیتابیس")
+
 
 
 @app.get("/users/me")
@@ -418,3 +446,5 @@ async def read_users_me(user: User = Depends(get_current_user), db: Session = De
         "avatar": user.avatar,
         "permissions": permissions
     }
+
+# برای اجرای سرور: uvicorn main:app --reload
