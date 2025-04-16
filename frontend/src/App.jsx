@@ -11,6 +11,7 @@ import ProductsPage from './components/ProductsPage';
 import ProfilePage from './components/ProfilePage';
 import AdminPage from './components/AdminPage';
 import ChatBox from './components/ChatBox.jsx'; // Import ChatBox
+import ProductGenerator from './components/ProductGenerator.jsx';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -92,7 +93,7 @@ function App() {
         <LayoutComponent user={user}>
           <Routes>
             <Route path="/" element={<Dashboard user={user} />} />
-            <Route path="/generate" element={<GeneratePage />} />
+            <Route path="/generate" element={<ProductGenerator />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/profile" element={<ProfilePage user={user} />} />
             <Route path="/admin" element={<AdminPage />} />
