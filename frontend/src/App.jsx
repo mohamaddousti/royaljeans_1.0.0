@@ -10,7 +10,7 @@ import GeneratePage from './components/GeneratePage';
 import ProductsPage from './components/ProductsPage';
 import ProfilePage from './components/ProfilePage';
 import AdminPage from './components/AdminPage';
-import ChatBox from './components/ChatBox'; // Import ChatBox
+import ChatBox from './components/ChatBox.jsx'; // Import ChatBox
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));

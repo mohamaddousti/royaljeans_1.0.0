@@ -13,9 +13,8 @@ import {
   DrawerCloseButton,
 } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
-import Navbar from './Navbar';
-import Sidebar from './Sidebar';
-import Footer from './Footer';
+import Sidebar from './Sidebar.jsx';
+import Footer from './Footer.jsx';
 
 const LayoutComponent = ({ children, user }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -31,7 +30,6 @@ const LayoutComponent = ({ children, user }) => {
   return (
     <Flex direction="column" minH="100vh" bg={bgColor} color={textColor}>
       {/* Navbar */}
-      <Navbar user={user} />
 
       {/* Content */}
       <Flex flex="1" direction="row" pt={4} px={isMobile ? 2 : 4} alignItems="flex-start">
