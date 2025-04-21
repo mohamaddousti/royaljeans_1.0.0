@@ -1,8 +1,8 @@
 /* Font definitions */
 @font-face {
-  font-family: 'Vazir';
-  src: url('./fonts/Vazir.woff2') format('woff2'),
-       url('./fonts/Vazir.woff') format('woff');
+  font-family: 'Vazirmatn';
+  src: url('./fonts/Vazirmatn-Regular.woff2') format('woff2'),
+       url('./fonts/Vazirmatn-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -11,11 +11,12 @@
 /* Reset and base styles */
 * {
   box-sizing: border-box;
+  font-family: 'Vazirmatn', Arial, sans-serif !important;
 }
 
 html, body {
   direction: rtl;
-  font-family: 'Vazir', Arial, sans-serif;
+  font-family: 'Vazirmatn', Arial, sans-serif;
 }
 
 /* Fix for Chakra UI RTL support */
@@ -23,12 +24,25 @@ html, body {
   border-color: var(--chakra-colors-gray-200);
 }
 
+/* Light Theme Button Text Color Override */
+.chakra-ui-light .btn {
+  color: var(--chakra-colors-gray-800) !important;
+}
+
+.chakra-ui-light .btn:hover {
+  color: var(--chakra-colors-gray-800) !important;
+}
+
+.chakra-ui-light .btn:active {
+  color: var(--chakra-colors-gray-800) !important;
+}
+
 html {
   font-size: 16px;
 }
 
 body {
-  font-family: 'Vazir', Arial, sans-serif;
+  font-family: 'Vazirmatn', Arial, sans-serif;
   direction: rtl;
   margin: 0;
   padding: 0;
@@ -37,40 +51,62 @@ body {
   overflow-x: hidden;
 }
 
-#root, .App {
-  width: 100%;
-  min-height: 100vh;
-}
-
-/* Container styles */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 15px;
-}
-
 /* Form elements */
 input, button, select, textarea {
   width: 100%;
   margin: 0.75rem 0;
   padding: 0.75rem;
-  font-family: 'Vazir', Arial, sans-serif;
+  font-family: 'Vazirmatn', Arial, sans-serif;
   font-size: 1rem;
   border-radius: 4px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--chakra-colors-gray-200);
 }
 
-button {
-  background-color: #007bff;
-  color: white;
+/* Button Styles */
+.btn {
+  display: inline-block;
+  font-family: 'Vazirmatn', Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
   border: none;
+  background-color: var(--chakra-colors-brand-500);
+  color: var(--chakra-colors-gray-800);
+  text-align: center;
+  vertical-align: middle;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  user-select: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.1s;
+  margin: 0.5rem;
 }
 
-button:hover {
-  background-color: #0056b3;
+.btn:hover,
+.btn:focus {
+  background-color: var(--chakra-colors-brand-600);
+  color: var(--chakra-colors-gray-800);
+  box-shadow: 0 4px 12px rgba(0,128,255,0.18);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  background-color: var(--chakra-colors-brand-700);
+  color: var(--chakra-colors-gray-800);
+  box-shadow: 0 2px 6px rgba(0,128,255,0.15) inset;
+  transform: translateY(0);
+}
+
+.btn:disabled,
+.btn[disabled] {
+  background-color: var(--chakra-colors-gray-200);
+  color: var(--chakra-colors-gray-500);
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.65;
+  transform: none;
 }
 
 /* Typography */
@@ -95,47 +131,3 @@ p {
   margin-bottom: 1rem;
 }
 
-/* Responsive breakpoints */
-@media (max-width: 768px) {
-  html {
-    font-size: 14px;
-  }
-  
-  .container {
-    padding: 0 10px;
-  }
-  
-  h1 {
-    font-size: 1.75rem;
-  }
-  
-  h2 {
-    font-size: 1.5rem;
-  }
-  
-  h3 {
-    font-size: 1.25rem;
-  }
-}
-
-@media (max-width: 480px) {
-  html {
-    font-size: 12px;
-  }
-  
-  input, button, select, textarea {
-    padding: 0.6rem;
-  }
-  
-  h1 {
-    font-size: 1.5rem;
-  }
-  
-  h2 {
-    font-size: 1.25rem;
-  }
-  
-  h3 {
-    font-size: 1.1rem;
-  }
-}

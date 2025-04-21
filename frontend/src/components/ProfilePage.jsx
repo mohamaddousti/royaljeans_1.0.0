@@ -35,16 +35,16 @@ const ProfilePage = ({ user }) => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8000/users/update', {
-        method: 'PUT',
+      const formData = new FormData();
+      formData.append('first_name', firstName);
+      formData.append('last_name', lastName);
+
+      const response = await fetch('http://localhost:8000/update_profile', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          first_name: firstName,
-          last_name: lastName
-        })
+        body: formData
       });
       
       if (response.ok) {
@@ -78,16 +78,16 @@ const ProfilePage = ({ user }) => {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8000/users/change-password', {
-        method: 'PUT',
+      const formData = new FormData();
+      formData.append('current_password', currentPassword);
+      formData.append('new_password', newPassword);
+
+      const response = await fetch('http://localhost:8000/update_password', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({
-          current_password: currentPassword,
-          new_password: newPassword
-        })
+        body: formData
       });
       
       if (response.ok) {
@@ -102,14 +102,18 @@ const ProfilePage = ({ user }) => {
         });
       } else {
         const data = await response.json();
-        setError(data.detail || 'خطا در تغییر رمز عبور');
+        // Fix error message handling
+        const errorMessage = Array.isArray(data.detail) ? 
+          data.detail.map(err => err.msg).join(', ') : 
+          (data.detail || 'خطا در تغییر رمز عبور');
+        setError(errorMessage);
       }
     } catch (err) {
       setError('اتصال به سرور ناموفق بود');
     } finally {
       setLoading(false);
     }
-  };
+};
 
   return (
     <Box>

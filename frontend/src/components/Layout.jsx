@@ -11,50 +11,104 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
+  useDisclosure,
+  Container,
+  VStack
 } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import Sidebar from './Sidebar.jsx';
 import Footer from './Footer.jsx';
-import Navbar from './Navbar.jsx'; // Import Navbar
+import Navbar from './Navbar.jsx';
 
 const LayoutComponent = ({ children, user }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isMobile] = useMediaQuery('(max-width: 768px'); // Adjust breakpoint as needed
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isMobile] = useMediaQuery('(max-width: 768px)');
 
-  const handleSidebarToggle = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
+  // Theme colors
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const textColor = useColorModeValue('gray.700', 'gray.400');
+  const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   return (
-    <Flex direction="column" minH="100vh" bg={bgColor} color={textColor}>
-      {/* Navbar */}
-      <Navbar user={user} /> {/* Render Navbar */}  
-      {/* Content */}
-      <Flex flex="1" direction="row" pt={4} px={isMobile ? 2 : 4} alignItems="flex-start">
-        {/* Sidebar (Hidden on smaller screens, use Drawer) */}
+    <Flex 
+      direction="column" 
+      minH="100vh" 
+      bg={bgColor} 
+      color={textColor}
+      fontFamily="Vazirmatn, sans-serif"
+    >
+      {/* Navbar - Fixed at top */}
+      <Navbar 
+        user={user} 
+        onMenuClick={onOpen}
+        isMobile={isMobile}
+      />
+      
+      {/* Main Content Area */}
+      <Flex 
+        flex="1" 
+        direction="row" 
+        pt={{ base: 2, md: 4 }} 
+        px={{ base: 0, md: 4 }}
+      >
+        {/* Sidebar - Responsive handling */}
         {isMobile ? (
-          <Drawer placement="right" onClose={handleSidebarToggle} isOpen={isSidebarOpen}>
-            <DrawerOverlay>
-              <DrawerContent>
-                <DrawerCloseButton />
-                <DrawerBody>
-                  <Sidebar />
-                </DrawerBody>
-              </DrawerContent>
-            </DrawerOverlay>
+          <Drawer 
+            placement="right" 
+            onClose={onClose} 
+            isOpen={isOpen}
+            size="xs"
+          >
+            <DrawerOverlay />
+            <DrawerContent>
+              <DrawerCloseButton />
+              <DrawerBody p={0}>
+                <Sidebar user={user} isExpanded={true} />
+              </DrawerBody>
+            </DrawerContent>
           </Drawer>
         ) : (
-          <Box w="250px" flexShrink={0} ml={4}> {/* Left margin to push content */}
-            <Sidebar />
+          <Box 
+            w="80px" 
+            flexShrink={0} 
+            transition="width 0.3s ease"
+            _hover={{ w: "250px" }}
+            h="calc(100vh - 60px)"
+            position="sticky"
+            top="60px"
+            overflowY="auto"
+            className="sidebar-container"
+            css={{
+              '&::-webkit-scrollbar': {
+                width: '4px',
+              },
+              '&::-webkit-scrollbar-track': {
+                width: '6px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: borderColor,
+                borderRadius: '24px',
+              },
+            }}
+          >
+            <Sidebar user={user} />
           </Box>
         )}
 
         {/* Main Content */}
-        <Box flex="1" p={4} direction="rtl">
-          {children}
+        <Box 
+          flex="1" 
+          p={{ base: 2, md: 4 }}
+          ml={{ base: 0, md: 2 }}
+          overflowX="hidden"
+        >
+          <Container 
+            maxW={{ base: "100%", lg: "1200px" }} 
+            px={{ base: 2, md: 4 }}
+            py={4}
+          >
+            {children}
+          </Container>
         </Box>
       </Flex>
 

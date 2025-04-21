@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-// Import Chakra UI components
-import { Box, Spinner, Text, Center, useColorModeValue} from '@chakra-ui/react';
+import {
+  Box,
+  Spinner,
+  Text,
+  Center,
+  useColorModeValue,
+  ChakraProvider,
+  extendTheme,
+} from '@chakra-ui/react';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import './App.css';
@@ -9,16 +16,49 @@ import LayoutComponent from './components/Layout';
 import GeneratePage from './components/GeneratePage';
 import ProductsPage from './components/ProductsPage';
 import ProfilePage from './components/ProfilePage';
-import AdminPage from './components/AdminPage';
-import ChatBox from './components/ChatBox.jsx'; // Import ChatBox
+import Admin from './components/Admin';
+import ChatBox from './components/ChatBox';
 import ProductGenerator from './components/ProductGenerator.jsx';
+
+// Define custom theme
+const theme = extendTheme({
+  direction: 'rtl',
+  fonts: {
+    heading: 'Vazirmatn, sans-serif',
+    body: 'Vazirmatn, sans-serif',
+  },
+  colors: {
+    brand: {
+      50: '#e6f7ff',
+      100: '#b3e0ff',
+      200: '#80caff',
+      300: '#4db3ff',
+      400: '#1a9dff',
+      500: '#0080ff',
+      600: '#0066cc',
+      700: '#004d99',
+      800: '#003366',
+      900: '#001a33',
+    },
+  },
+  components: {
+    Button: {
+      baseStyle: {
+        fontWeight: 'normal',
+      },
+    },
+  },
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+  },
+});
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(!!token); // Keep loading state logic
+  const [loading, setLoading] = useState(!!token);
 
-  // Fetch user data logic remains the same
   useEffect(() => {
     const fetchUserData = async () => {
       if (!token) {
@@ -31,8 +71,8 @@ function App() {
       try {
         const response = await fetch('http://localhost:8000/users/me', {
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         if (response.ok) {
           const userData = await response.json();
@@ -56,30 +96,14 @@ function App() {
     fetchUserData();
   }, [token]);
 
-  // Use color mode value for potential styling adjustments
   const bgColor = useColorModeValue('gray.50', 'gray.800');
   const textColor = useColorModeValue('gray.800', 'whiteAlpha.900');
 
   return (
-    <Router>
-      {/* CssBaseline is removed */}
-      {loading ? (
-        // Replace MUI Box and CircularProgress with Chakra Center and Spinner
-        <Center h="100vh" bg={bgColor}  fontFamily= 'Vazirmatn, sans-serif'>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="brand.500" // Use brand color
-            size="xl"
-          />
-          {/* Replace MUI Typography with Chakra Text */}
-          <Text fontSize="xl" ml={4} color={textColor}  fontFamily= 'Vazirmatn, sans-serif'>در حال بارگذاری...</Text>
-        </Center>
-      ) : !token ? (
-        <Login setToken={setToken} />
-      ) : !user ? ( // Optional: Add a specific loading state for user fetching if desired
-          <Center h="100vh" bg={bgColor}  fontFamily= 'Vazirmatn, sans-serif'>
+    <ChakraProvider theme={theme}>
+      <Router>
+        {loading ? (
+          <Center h="100vh" bg={bgColor} fontFamily="Vazirmatn, sans-serif">
             <Spinner
               thickness="4px"
               speed="0.65s"
@@ -87,22 +111,40 @@ function App() {
               color="brand.500"
               size="xl"
             />
-            <Text fontSize="xl" ml={4} color={textColor}  fontFamily= 'Vazirmatn, sans-serif'>در حال دریافت اطلاعات کاربر...</Text>
+            <Text fontSize="xl" ml={4} color={textColor}>
+              در حال بارگذاری...
+            </Text>
           </Center>
-      ) : (
-        <LayoutComponent user={user}>
-          <Routes>
-            <Route path="/" element={<Dashboard user={user} />} />
-            <Route path="/generate" element={<ProductGenerator />} />
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/profile" element={<ProfilePage user={user} />} />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </LayoutComponent>
-      )}
-      <ChatBox /> {/* Add ChatBox component */}
-    </Router>
+        ) : !token ? (
+          <Login setToken={setToken} />
+        ) : !user ? (
+          <Center h="100vh" bg={bgColor} fontFamily="Vazirmatn, sans-serif">
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="brand.500"
+              size="xl"
+            />
+            <Text fontSize="xl" ml={4} color={textColor}>
+              در حال دریافت اطلاعات کاربر...
+            </Text>
+          </Center>
+        ) : (
+          <LayoutComponent user={user}>
+            <Routes>
+              <Route path="/" element={<Dashboard user={user} />} />
+              <Route path="/generate" element={<ProductGenerator user={user} />} />
+              <Route path="/products" element={<ProductsPage user={user} />} />
+              <Route path="/profile" element={<ProfilePage user={user} />} />
+              <Route path="/admin" element={<Admin user={user} />} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+            <ChatBox user={user} bg={bgColor} color={textColor} />
+          </LayoutComponent>
+        )}
+      </Router>
+    </ChakraProvider>
   );
 }
 

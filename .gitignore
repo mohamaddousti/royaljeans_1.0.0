@@ -1,1 +1,11 @@
+venv/
+env/
+static/
+exports/
+*.db
+*.sqlite3
+*.pyc
+__pycache__/
+.DS_Store
+.env
 node_modules

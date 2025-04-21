@@ -1,119 +1,67 @@
-.chatbox {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 280px;
-  max-height: 400px;
-  background: linear-gradient(135deg, #8B5CF6, #EC4899);
-  border-radius: 15px;
-  overflow: hidden;
-  transform: translateY(100%);
-  opacity: 0;
-  transition: all 0.3s ease;
-  z-index: 1000;
-  font-family: 'Vazirmatn', sans-serif;
+.chatbox-footer {
+  background: var(--chakra-colors-chakra-body-bg);
+  border-top: 1px solid var(--chakra-colors-chakra-border-color);
+  padding: 12px;
 }
 
-.chatbox.active {
-  transform: translateY(0);
-  opacity: 1;
+.chatbox-footer-input {
+  background: var(--chakra-colors-chakra-subtle-bg) !important;
+  border-color: var(--chakra-colors-chakra-border-color) !important;
+  color: var(--chakra-colors-chakra-body-text) !important;
 }
 
-.chatbox-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px;
-  background: rgba(0, 0, 0, 0.2);
-  color: white;
-}
-
-.chatbox-header h5 {
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.user-status {
-  display: flex;
-  align-items: center;
-}
-
-.user-status span {
-  font-size: 0.8rem;
-}
-
-.status {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 5px;
-}
-
-.status.online {
-  background: #00FF00;
-}
-
-.status.away {
-  background: #808080;
-}
-
-.chatbox-header button {
-  background: #00D4FF;
+.chatbox-footer-button {
+  background: var(--chakra-colors-blue-500);
   border: none;
   border-radius: 5px;
-  padding: 5px 10px;
-  color: white;
-  font-size: 0.8rem;
+  padding: 8px;
+  margin-left: 8px;
+  color: var(--chakra-colors-white);
+  font-size: 0.9rem;
+  min-height: 40px;
+  min-width: 40px;
+}
+
+.chatbox-footer-button:disabled {
+  background: var(--chakra-colors-gray-300);
+  cursor: not-allowed;
 }
 
 .chatbox-messages {
-  max-height: 300px;
-  overflow-y: auto;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.05);
+  overflow-y: auto !important;
+  scrollbar-width: thin;
+  scrollbar-color: var(--chakra-colors-blue-100) var(--chakra-colors-chakra-body-bg);
 }
 
-.message {
-  margin-bottom: 8px;
-  padding: 6px 10px;
-  border-radius: 10px;
-  max-width: 80%;
-  font-size: 0.85rem;
+.chatbox-messages::-webkit-scrollbar {
+  width: 8px;
 }
 
-.bot-message {
-  background: rgba(255, 255, 255, 0.2);
-  margin-right: auto;
+.chatbox-messages::-webkit-scrollbar-track {
+  background: var(--chakra-colors-chakra-body-bg);
 }
 
-.user-message {
-  background: linear-gradient(135deg, #00D4FF, #8B5CF6);
-  color: white;
-  margin-left: auto;
+.chatbox-messages::-webkit-scrollbar-thumb {
+  background: var(--chakra-colors-blue-100);
+  border-radius: 4px;
 }
 
-.chatbox-footer {
+.chatbox-messages::-webkit-scrollbar-thumb:hover {
+  background: var(--chakra-colors-blue-200);
+}
+
+.chatbox-file-message {
   display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 8px;
+  border-radius: 5px;
+  background: var(--chakra-colors-chakra-subtle-bg);
+  color: var(--chakra-colors-blue-500);
+  font-weight: 600;
+  text-decoration: none;
 }
 
-.chatbox-footer input {
-  flex: 1;
-  border: none;
-  border-radius: 5px;
-  padding: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 0.85rem;
-}
-
-.chatbox-footer button {
-  background: #00D4FF;
-  border: none;
-  border-radius: 5px;
-  padding: 6px 10px;
-  margin-right: 5px;
-  color: white;
-  font-size: 0.85rem;
+.chatbox-file-message:hover {
+  background: var(--chakra-colors-blue-50);
 }

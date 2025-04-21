@@ -1,8 +1,189 @@
+/* تنظیمات اصلی سایدبار */
 .sidebar {
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease;
+  width: 80px; /* عرض پیش‌فرض برای نمایش فقط آیکون‌ها */
+  overflow: hidden;
+  position: fixed;
+  right: 0;
+  z-index: 1000;
+  direction: rtl;
+  padding-top: 30px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* متغیرهای رنگ */
+  --sidebar-bg: #ffffff;
+  --sidebar-text: #333333;
+  --sidebar-hover-bg: rgba(0, 0, 0, 0.08);
+  --sidebar-active-bg: rgba(0, 0, 0, 0.12);
+  --sidebar-border: rgba(0, 0, 0, 0.1);
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
 }
 
-.sidebar:hover {
-  transform: translateX(-5px); /* Adjust value as needed */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adjust shadow as needed */
+/* Add dark mode support */
+@media (prefers-color-scheme: dark) {
+  .sidebar {
+    --sidebar-bg: #1a202c;
+    --sidebar-text: #ffffff;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+    --sidebar-active-bg: rgba(255, 255, 255, 0.16);
+    --sidebar-border: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* For manual dark mode toggle */
+.dark-theme .sidebar {
+  --sidebar-bg: #1a202c;
+  --sidebar-text: #ffffff;
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.08);
+  --sidebar-active-bg: rgba(255, 255, 255, 0.16);
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+}
+
+/* تغییر عرض سایدبار در حالت هاور */
+.sidebar-container:hover .sidebar {
+  width: 250px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  margin: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  justify-content: flex-start;
+  flex-direction: row-reverse;
+  color: var(--sidebar-text);
+}
+
+.sidebar-item:hover {
+  background-color: var(--sidebar-hover-bg);
+}
+
+.sidebar-item.active {
+  background-color: var(--sidebar-active-bg);
+  font-weight: 600;
+  position: relative;
+}
+
+/* نشانگر آیتم فعال */
+.sidebar-item.active::before {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 70%;
+  background-color: var(--sidebar-text);
+  border-radius: 2px;
+}
+
+.sidebar-item-icon {
+  margin-left: 12px;
+  font-size: 1.2rem;
+  color: var(--sidebar-text);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+/* مخفی کردن متن در حالت عادی و نمایش در حالت هاور */
+.sidebar-item-text {
+  white-space: nowrap;
+  opacity: 0; /* در حالت عادی مخفی */
+  transition: opacity 0.3s ease;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  color: var(--sidebar-text);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* نمایش متن در حالت هاور */
+.sidebar-container:hover .sidebar-item-text {
+  opacity: 1;
+}
+
+/* همیشه نمایش متن در حالت expanded */
+.sidebar.expanded .sidebar-item-text {
+  opacity: 1;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid var(--sidebar-border);
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+}
+
+/* مخفی کردن اطلاعات کاربر در حالت عادی */
+.sidebar-user-info {
+  margin-right: 12px;
+  white-space: nowrap;
+  opacity: 0; /* در حالت عادی مخفی */
+  transition: opacity 0.3s ease;
+  font-weight: 500;
+  color: var(--sidebar-text);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* نمایش اطلاعات کاربر در حالت هاور */
+.sidebar-container:hover .sidebar-user-info {
+  opacity: 1;
+}
+
+/* همیشه نمایش اطلاعات کاربر در حالت expanded */
+.sidebar.expanded .sidebar-user-info {
+  opacity: 1;
+}
+
+/* تنظیمات پاسخگویی */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 0;
+    padding-top: 60px;
+  }
+  
+  .sidebar.expanded {
+    width: 250px;
+  }
+  
+  .sidebar.expanded .sidebar-item-text,
+  .sidebar.expanded .sidebar-user-info {
+    opacity: 1;
+    display: block;
+  }
+  
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+  }
 }
